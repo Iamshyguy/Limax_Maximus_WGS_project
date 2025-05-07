@@ -7,3 +7,5 @@ Flowchart showcasing the steps the script performs
 ![](https://github.com/Iamshyguy/Limax_Maximus_WGS_project/blob/master/images/Assembly_chart.png)
 *manual install
 
+
+
