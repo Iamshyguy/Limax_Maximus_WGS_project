@@ -5,8 +5,8 @@ import shutil
 
 #set up parser
 parser = argparse.ArgumentParser(
-                    prog='assembler',
-                    description='Script that performs the long read (nanopore or pacbio), short read (illumina), hi-c (illumina) data. then assembles the long read data, polishes it using the short read data and sorts it into chromosomes using the hi-c data',
+                    prog='assembly',
+                    description='Script that performs a whole genome assembly using long read (nanopore or pacbio), short read (illumina) and hi-c (illumina) data. The script first assembles the long read data, polishes it using the short read data and then sorts it into chromosomes using the hi-c data',
                     epilog='')
 
 parser.add_argument('long_input',help="path to the long read data fastq")
@@ -364,7 +364,7 @@ if stepscheck(steps):
     subprocess.run(f"bash juicer.sh -z corrected_assembly.fastq {juicer_args} -p chrom.sizes -S early", cwd=juicerdir, shell=True)
     shutil.rmtree(f"{juicerdir}/splits")
     shutil.copyfile(f"{juicerdir}/aligned/merged_nodups.txt",f"{dnadir}/merged_nodups.txt")
-        shutil.copyfile(f"{juicerdir}/aligned/merged_nodups.txt",f"{assemblydir}/{juicer}/{snail}_merged_nodups.txt")
+    shutil.copyfile(f"{juicerdir}/aligned/merged_nodups.txt",f"{assemblydir}/{juicer}/{snail}_merged_nodups.txt")
 
 steps+=1
 if stepscheck(steps):
