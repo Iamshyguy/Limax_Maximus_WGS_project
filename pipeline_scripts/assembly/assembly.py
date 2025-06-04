@@ -16,7 +16,7 @@ parser.add_argument('hic_input1',help="path to the forward hi-c read data fastq.
 parser.add_argument('hic_input2',help="path to the reverse hi-c read data fastq.gz (please ensure these are gzipped to avoid juicer errors)")
 parser.add_argument('outpath',help="path to the output directory (will create one if the directory is not yet present, if present, will ask if user wants to remove or rename the directory)")
 parser.add_argument('-p', '--pacbio', action='store_true', help="utilize pacbio hifi data instead of nanopore")
-parser.add_argument('-s', '--snail', help="the name of the snail genome being assembled, default = lmaximus" )
+parser.add_argument('-s', '--snail', help="the name of the snail genome being assembled (default = lmaximus)" )
 parser.add_argument('-t', '--threads', help="the amount of threads you'd like to use (default = 94)")
 parser.add_argument('-j', '--juicerdir', help="location of the juicer CPU directory (default = /media/data2/juicer-1.6/CPU)")
 parser.add_argument('-d', '--dna3ddir', help="location of the 3d-dna directory (default = /media/data2/3d-dna-master_altered_fixed)")
@@ -42,7 +42,7 @@ shortr2=args.short_input2
 hicr1=args.hic_input1
 hicr2=args.hic_input2
 pac=args.pacbio
-snail=args.snail.replace(" ","")
+snail=args.snail
 outfile=args.outpath
 threads=args.threads
 juicerdir=args.juicerdir
@@ -73,6 +73,8 @@ if outfile.endswith("/"):
 if snail == None:
     snail="lmaximus"
 
+snail=snail.replace(" ","")
+
 if juicerdir==None:
     juicerdir="/media/data2/juicer-1.6/CPU"
 
@@ -84,12 +86,15 @@ if pilonjar==None:
 
 if os.path.isdir(juicerdir) == False:
     print(f"{juicerdir} does not exist, exiting")
+    quit()
 
 if os.path.isdir(dnadir) == False:
     print(f"{dnadir} does not exist, exiting")
+    quit()
 
 if os.path.isfile(pilonjar) == False:
     print(f"{pilonjar} does not exist, exiting")
+    quit()
 
 if hifiasm_args==None:
     hifiasm_args=""
@@ -154,17 +159,14 @@ def stepscheck(step):
         return False
 
 
-
-
-
-
 steps=1
 
-if os.path.isdir(f"{assemblydir}/hifiasm")==False:
-    os.mkdir(f"{assemblydir}/hifiasm")
+
 
 if stepscheck(steps):
     if pac:
+        if os.path.isdir(f"{assemblydir}/hifiasm")==False:
+            os.mkdir(f"{assemblydir}/hifiasm")
         #assemble pacbio data
         outpath=f"{assemblydir}/hifiasm/{snail}"
         subprocess.run(f"hifiasm {hifiasm_args} -o {outpath} -t {threads} {longr}", shell=True)
@@ -186,27 +188,27 @@ if stepscheck(steps):
         assembly_alignment=outpath
 
     else:
-        #predict genome size using kmerfreq and gce
-        #subprocess.run(f"kmerfreq  -k 17 {shortr_cleaned}", shell=True)
-        #subprocess.run(f"gce -f {kmerfreqout} -g {kmernum???}", shell=True)
-        #size=gceout???
-
-        print("sorry this feature is not supported yet, please use pacbio data")
-        quit()
-
+        if os.path.isdir(f"{assemblydir}/flye")==False:
+            os.mkdir(f"{assemblydir}/flye")
         #filter nanopore data
-        outpath= f"{assemblydir}/{snail}_nanopore_filtered"
-        #subprocess.run(f"chopper -q 10 -i {longr} > {outpath}", shell=True)
+        outpath= f"{assemblydir}/flye/{snail}_nanopore_filtered.fasta"
+        subprocess.run(f"chopper -q 10 -i {longr} > {outpath}", shell=True)
         longr_filtered=outpath
 
         #assemble nanopore data
-        outpath= f"{assemblydir}"
+        outpath= f"{assemblydir}/flye"
         subprocess.run(f"flye --nano-raw {longr_filtered} --out-dir {outpath}", shell=True)
-        assembly= f"{outpath}/"
-        #assembly_alignment = ???
+        assembly= f"{outpath}/???"
+        outpath=f"{assemblydir}/flye/{snail}_assembly.bam"
+        subprocess.run(f"minimap2 {assembly} {longr_filtered} | samtools view -bS - > output.bam", shell=True)
+        selfalignment=outpath
+        outpath=selfalignment.replace(".bam","_sorted.bam")
+        subprocess.run(f"samtools sort -@ {threads} {selfalignment} -o {outpath}", shell=True)
+        assembly_alignment=outpath
 
     outpath=f"{resultsdir}/{snail}_busco_raw_assembly"
     subprocess.run(f"busco -i {assembly} -f -m genome -c {threads} -l mollusca -f -o {outpath}", shell=True)
+    subprocess.run(f"quast {assembly} -o {resultsdir}/{snail}_quast_raw_assembly", shell=True)
 else:
     if pac:
         outpath=f"{assemblydir}/hifiasm/{snail}"
@@ -218,8 +220,15 @@ else:
         outpath=selfalignment.replace(".bam","_sorted.bam")
         assembly_alignment=outpath
     else:
-        print("sorry this feature is not supported yet, please use pacbio data")
-        quit()
+        outpath= f"{assemblydir}/flye/{snail}_nanopore_filtered.fasta"
+        longr_filtered=outpath
+        outpath= f"{assemblydir}/flye"
+        assembly= f"{outpath}/???"
+        outpath=f"{assemblydir}/flye/{snail}_assembly.bam"
+        selfalignment=outpath
+        outpath=selfalignment.replace(".bam","_sorted.bam")
+        assembly_alignment=outpath
+
 
 steps+=1
 
@@ -229,8 +238,10 @@ if os.path.isdir(f"{assemblydir}/purge_haplotigs")==False:
 if stepscheck(steps):
     #remove haplotigs from the assembly
     subprocess.run(f"purge_haplotigs  readhist -b {assembly_alignment} -g {assembly}", shell=True)
-    genecov=f"{assembly_alignment.split('/')[-1]}.200.gencov"
-    coveragehist=f"{assembly_alignment.split('/')[-1]}.histogram.200.png"
+    shutil.copyfile(f"{assembly_alignment.split('/')[-1]}.200.gencov",f"{assemblydir}/purge_haplotigs/{assembly_alignment.split('/')[-1]}.200.gencov")
+    shutil.copyfile(f"{assembly_alignment.split('/')[-1]}.histogram.200.png",f"{assemblydir}/purge_haplotigs/{assembly_alignment.split('/')[-1]}.histogram.200.png")
+    genecov=f"{assemblydir}/purge_haplotigs/{assembly_alignment.split('/')[-1]}.200.gencov"
+    coveragehist=f"{assemblydir}/purge_haplotigs/{assembly_alignment.split('/')[-1]}.histogram.200.png"
     while True:
         user_input = input(f"please input the low cutoff value from the generated histogram located at {coveragehist}:")
         try:
@@ -335,14 +346,13 @@ if ns==False:
         outpath=f"{assemblydir}/pilon/{snail}_corrected_assembly"
         subprocess.run(f"java -Xmx900G -jar {pilonjar}  --frags {alignmentsort} --genome {assembly_purged} --outdir {assemblydir}/pilon --output {outpath.split('/')[-1]} --fix bases --nonpf --minqual 20 {pilon_args}", shell=True)
         assembly_corrected=outpath+".fasta"
-        shutil.copyfile(assembly_corrected, f"{juicerdir}/corrected_assembly.fastq")
-        subprocess.run(f"bwa index {juicerdir}/corrected_assembly.fastq", shell=True)
     else:
         outpath=f"{assemblydir}/pilon/{snail}_corrected_assembly"
         assembly_corrected=outpath+".fasta"
 
 else:
     assembly_corrected=assembly_purged
+    steps+=3
 
 if sj:
     print("-sj flag was triggered, quitting")
@@ -353,23 +363,32 @@ if os.path.isdir(f"{assemblydir}/juicer")==False:
 
 steps+=1
 if stepscheck(steps):
-#map hi-c data to assembly (Juicer must be manually installed)
+    #map hi-c data to assembly (Juicer must be manually installed)
+    if os.path.isdir(f"{juicerdir}/input"):
+        shutil.rmtree(f"{juicerdir}/input")
     if os.path.isdir(f"{juicerdir}/aligned"):
         shutil.rmtree(f"{juicerdir}/aligned")
     if os.path.isdir(f"{juicerdir}/splits"):
         shutil.rmtree(f"{juicerdir}/splits")
     os.mkdir(f"{juicerdir}/splits")
+    os.mkdir(f"{juicerdir}/input")
+    shutil.copyfile(assembly_corrected, f"{juicerdir}/input/{snail}_corrected_assembly.fasta")
+    subprocess.run(f"bwa index {juicerdir}/input/{snail}_corrected_assembly.fasta", shell=True)
     shutil.copyfile(hicr1, f"{juicerdir}/splits/{snail}_HIC_R1.fastq.gz")
     shutil.copyfile(hicr2, f"{juicerdir}/splits/{snail}_HIC_R2.fastq.gz")
-    subprocess.run(f"bash juicer.sh -z corrected_assembly.fastq {juicer_args} -p chrom.sizes -S early", cwd=juicerdir, shell=True)
+    subprocess.run(f"bash juicer.sh -z input/{snail}_corrected_assembly.fasta {juicer_args} -p chrom.sizes -S early", cwd=juicerdir, shell=True)
     shutil.rmtree(f"{juicerdir}/splits")
-    shutil.copyfile(f"{juicerdir}/aligned/merged_nodups.txt",f"{dnadir}/merged_nodups.txt")
-    shutil.copyfile(f"{juicerdir}/aligned/merged_nodups.txt",f"{assemblydir}/{juicer}/{snail}_merged_nodups.txt")
+    shutil.rmtree(f"{juicerdir}/input")
+    shutil.copyfile(f"{juicerdir}/aligned/merged_nodups.txt",f"{assemblydir}/juicer/{snail}_merged_nodups.txt")
+    shutil.rmtree(f"{juicerdir}/aligned")
+
+
 
 steps+=1
 if stepscheck(steps):
     #create hi-c map and final assembly (3DDNA must be manually installed)
     shutil.copyfile(assembly_corrected, f"{dnadir}/{assembly_corrected.split('/')[-1]}")
+    shutil.copyfile(f"{assemblydir}/juicer/{snail}_merged_nodups.txt",f"{dnadir}/merged_nodups.txt")
     subprocess.run(f"bash run-asm-pipeline.sh -r 0 {dna3d_args} {assembly_corrected.split('/')[-1]} merged_nodups.txt", cwd=dnadir, shell=True)
     finalassembly=f"""{dnadir}/{assembly_corrected.split("/")[-1].replace(".fasta",".FINAL.fasta")}"""
     finalassemblyasm=f"""{dnadir}/{assembly_corrected.split("/")[-1].replace(".fasta",".FINAL.assembly")}"""
@@ -379,8 +398,10 @@ if stepscheck(steps):
     shutil.copyfile(finalassemblyhic, f"{resultsdir}/{snail}_final_assembly_uncorrected.hic")
     outpath=f"{resultsdir}/{snail}_busco_final_assembly"
     subprocess.run(f"busco -i {finalassembly}  -m genome -f -c {threads} -l mollusca -o {outpath}", shell=True)
+    subprocess.run(f"quast {finalassembly} -o {resultsdir}/{snail}_quast_final_assembly", shell=True)
 
-print("assembly complete, now check your hi-c heatmap and rerun 3DDNA with different parameters if required, after achieving a satisfactory heatmap manually fix any remainging errors using juicebox and place this corrected assembly in the results folder with the name (snail)_final_assembly_corrected.fasta")
+
+print("assembly complete, now check your hi-c heatmap and rerun 3DDNA with different parameters if required, after achieving a satisfactory heatmap manually fix any remainging errors using juicebox and place this corrected assembly in the results folder with the name (snail)_final_assembly_corrected.fasta (later scripts will not use the files found in working_directory/assembly, feel free to remove these if they take up to much space)")
 
 
 

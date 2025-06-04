@@ -2,7 +2,7 @@ from Bio import SeqIO
 import argparse
 
 parser = argparse.ArgumentParser(
-                    prog='longest',
+                    prog='sortbysize',
                     description='Script sorts sequences by length (assumes lengths are unique, if not, the script wont work)')
 
 parser.add_argument('input',help="path to the fasta file")
