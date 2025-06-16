@@ -1,0 +1,19 @@
+# BUSCO version is: 5.8.3 
+# The lineage dataset is: mollusca_odb12 (Creation date: 2025-04-11, number of genomes: 36, number of BUSCOs: 4421)
+# Summarized benchmarking in BUSCO notation for file /media/data2/pipeline_deroceas/results/dlasithionense_proteins_filtered.aa
+# BUSCO was run in mode: proteins
+
+	***** Results: *****
+
+	C:92.1%[S:62.4%,D:29.7%],F:3.9%,M:4.0%,n:4421	   
+	4073	Complete BUSCOs (C)			   
+	2760	Complete and single-copy BUSCOs (S)	   
+	1313	Complete and duplicated BUSCOs (D)	   
+	171	Fragmented BUSCOs (F)			   
+	177	Missing BUSCOs (M)			   
+	4421	Total BUSCO groups searched		   
+
+Dependencies and versions:
+	hmmsearch: 3.1
+	python: sys.version_info(major=3, minor=9, micro=19, releaselevel='final', serial=0)
+	busco: 5.8.3

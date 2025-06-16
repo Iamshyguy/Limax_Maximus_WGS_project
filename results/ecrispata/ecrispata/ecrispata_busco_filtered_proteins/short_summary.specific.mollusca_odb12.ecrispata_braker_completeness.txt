@@ -1,0 +1,19 @@
+# BUSCO version is: 5.8.3 
+# The lineage dataset is: mollusca_odb12 (Creation date: 2025-04-11, number of genomes: 36, number of BUSCOs: 4421)
+# Summarized benchmarking in BUSCO notation for file /media/data2/ecrispata_braker/braker/braker.aa
+# BUSCO was run in mode: proteins
+
+	***** Results: *****
+
+	C:95.0%[S:67.8%,D:27.2%],F:1.6%,M:3.4%,n:4421	   
+	4198	Complete BUSCOs (C)			   
+	2996	Complete and single-copy BUSCOs (S)	   
+	1202	Complete and duplicated BUSCOs (D)	   
+	72	Fragmented BUSCOs (F)			   
+	151	Missing BUSCOs (M)			   
+	4421	Total BUSCO groups searched		   
+
+Dependencies and versions:
+	hmmsearch: 3.1
+	python: sys.version_info(major=3, minor=9, micro=19, releaselevel='final', serial=0)
+	busco: 5.8.3
