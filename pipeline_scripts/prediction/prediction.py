@@ -2,6 +2,7 @@ import argparse
 import subprocess
 import os
 import shutil
+from Bio import SeqIO
 
 #set up parser
 parser = argparse.ArgumentParser(
@@ -16,7 +17,7 @@ parser.add_argument('cdna_input2',help="path to the reverse short read cdna data
 parser.add_argument('-nr','--norna',action='store_true',help="run gene prediction using GALBA instead of BRAKER3 (input path to galba with the -b flag)")
 parser.add_argument('-s', '--snail', help="the name of the snail genome being assembled (default = lmaximus)" )
 parser.add_argument('-d', '--dfam', help="path to the dfam tetools singularity file (make sure this is an absolute path) (default = /media/data2/dfam-tetools-latest.sif)")
-parser.add_argument('-d15', '--dfam15', help="path to partition 15 of the dfam transposable element database in fasta format (default = /media/data2/gastropoda.fa), see README for instructions on generating this file")
+parser.add_argument('-d15', '--dfam15', help="path to partition 15 of the dfam transposable element database in fasta format (default = /media/data2/gastropoda.fa)")
 parser.add_argument('-trf', '--trf_prgm', help="path to the trf executable (make sure this is an absolute path) (if you use conda it will be in the environment prediction under /bin) (default = /home/milan/miniconda3/envs/prediction/bin/trf")
 parser.add_argument('-b', '--braker', help="path to the braker singularity (make sure this is an absolute path) (default = /media/data2/braker3.sif)")
 parser.add_argument('-c', '--cutoff', help="cutoff for the lengths of the proteins created by braker/galba, proteins under this length are filtered out (default = 150)")
@@ -24,6 +25,7 @@ parser.add_argument('-t', '--threads', help="the amount of threads you'd like to
 parser.add_argument('-sf', '--start_from', help="the step of the assembly to start from, to see the list of steps use -sl")
 parser.add_argument('-sl', '--stepslist', action='store_true',help="Showcase a list of steps for the -sf flag")
 parser.add_argument('-ba', '--braker_args', help="additional braker/galba arguments")
+
 
 args=parser.parse_args()
 trf=args.trf_prgm
@@ -57,8 +59,6 @@ if step != None and step not in steplist:
     print("ERROR: please input a valid step to start from (to see a list of possible steps use -sl)")
     quit()
 
-if sl:
-    print("idklol")
 
 if threads==None:
     threads=94
@@ -118,7 +118,7 @@ if norna:
         os.mkdir(f"{predictdir}/galba/tmp")
     subprocess.run(f"singularity exec -B {predictdir}/galba/tmp:/tmp {braker} galba.pl --gff3 --threads {threads} --genome=masked.fa --AUGUSTUS_CONFIG_PATH=aug --prot_seq=protref.fa {ba}" ,cwd=f"{predictdir}/galba",shell=True)
     shutil.rmtree(f"{predictdir}/galba/tmp")
-    prots=f"{predictdir}/GALBA/galba.aa"
+    prots=f"{predictdir}/galba/GALBA/galba.aa"
 else:
     if os.path.isdir(f"{predictdir}/braker") == False:
         os.mkdir(f"{predictdir}/braker")
@@ -145,7 +145,7 @@ outtext=""
 with open(prots) as fasta_file:
     for record in SeqIO.parse(fasta_file, "fasta"):
         if len(record.seq) > threshold:
-            outtext += f">{record.id}\n{record.seq}\n"
+            outtext += f">{record.id}\n{record.seq.replace('*','')}\n"
 
 with open(f"{assemblydir}/results/{snail}_proteins_filtered.aa","w") as file:
     file.write(outtext)

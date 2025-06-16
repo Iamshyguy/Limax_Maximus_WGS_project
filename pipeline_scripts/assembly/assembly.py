@@ -32,6 +32,7 @@ parser.add_argument('-ns', '--no_short_reads', action='store_true', help="Skip s
 
 
 
+
 args = parser.parse_args()
 
 ns=args.no_short_reads
@@ -190,15 +191,10 @@ if stepscheck(steps):
     else:
         if os.path.isdir(f"{assemblydir}/flye")==False:
             os.mkdir(f"{assemblydir}/flye")
-        #filter nanopore data
-        outpath= f"{assemblydir}/flye/{snail}_nanopore_filtered.fasta"
-        subprocess.run(f"chopper -q 10 -i {longr} > {outpath}", shell=True)
-        longr_filtered=outpath
-
         #assemble nanopore data
         outpath= f"{assemblydir}/flye"
-        subprocess.run(f"flye --nano-raw {longr_filtered} --out-dir {outpath}", shell=True)
-        assembly= f"{outpath}/???"
+        subprocess.run(f"flye --nano-raw {longr} --out-dir {outpath} --threads {threads}", shell=True)
+        assembly= f"{outpath}/assembly.fasta"
         outpath=f"{assemblydir}/flye/{snail}_assembly.bam"
         subprocess.run(f"minimap2 {assembly} {longr_filtered} | samtools view -bS - > output.bam", shell=True)
         selfalignment=outpath

@@ -18,11 +18,11 @@ if i:
     with open(inputfile) as fasta_file:
         for record in SeqIO.parse(fasta_file, "fasta"):
             if len(record.seq) > threshold:
-                print(f">{record.id}\n{record.seq}")
+                print(f">{record.id}\n{record.seq.replace('*','')}")
 else:
     with open(inputfile) as fasta_file:
         for record in SeqIO.parse(fasta_file, "fasta"):
             if len(record.seq) < threshold:
-                print(f">{record.id}\n{record.seq}")
+                print(f">{record.id}\n{record.seq.replace('*','')}")
 
 

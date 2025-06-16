@@ -2,7 +2,7 @@ from Bio import SeqIO
 import argparse
 
 parser = argparse.ArgumentParser(
-                    prog='firstread',
+                    prog='readlen',
                     description='Script that gives read lengths from a fasta file',
                     epilog='')
 
