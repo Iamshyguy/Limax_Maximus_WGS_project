@@ -1,0 +1,32 @@
+# BUSCO version is: 5.8.3 
+# The lineage dataset is: mollusca_odb12 (Creation date: 2025-04-11, number of genomes: 36, number of BUSCOs: 4421)
+# Summarized benchmarking in BUSCO notation for file /media/data2/3d-dna-master_altered_fixed/dlasithionense_corrected_assembly.FINAL.fasta
+# BUSCO was run in mode: euk_genome_min
+# Gene predictor used: miniprot
+
+	***** Results: *****
+
+	C:97.3%[S:70.0%,D:27.3%],F:1.7%,M:1.0%,n:4421,E:2.3%	   
+	4301	Complete BUSCOs (C)	(of which 97 contain internal stop codons)		   
+	3093	Complete and single-copy BUSCOs (S)	   
+	1208	Complete and duplicated BUSCOs (D)	   
+	77	Fragmented BUSCOs (F)			   
+	43	Missing BUSCOs (M)			   
+	4421	Total BUSCO groups searched		   
+
+Assembly Statistics:
+	588	Number of scaffolds
+	1942	Number of contigs
+	1468044300	Total length
+	0.046%	Percent gaps
+	41 MB	Scaffold N50
+	2 MB	Contigs N50
+
+
+Dependencies and versions:
+	hmmsearch: 3.1
+	bbtools: None
+	miniprot_index: 0.13-r248
+	miniprot_align: 0.13-r248
+	python: sys.version_info(major=3, minor=9, micro=19, releaselevel='final', serial=0)
+	busco: 5.8.3

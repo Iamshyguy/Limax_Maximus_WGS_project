@@ -1,6 +1,6 @@
 #### Prediction
 
-The prediction.py script uses the assembly created by assembly.py and RNA data to perform gene prediction.
+The prediction.py script uses the assembly created by assembly.py and RNA data to perform gene prediction using GALBA or BRAKER3.
 
 Flowchart showcasing the steps the script performs
 ![](https://github.com/Iamshyguy/Limax_Maximus_WGS_project/blob/master/images/Prediction_chart.png)
