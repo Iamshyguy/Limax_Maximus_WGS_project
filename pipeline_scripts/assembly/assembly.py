@@ -56,9 +56,9 @@ dna3d_args=args.dna3d_args
 step=args.start_from
 sl=args.stepslist
 
-steplist=["hifiasm","purge_haplotigs","short_read_filtering","short_read_mapping","pilon","juicer","3DDNA"]
+steplist=["de_novo_assembly","purge_haplotigs","short_read_filtering","short_read_mapping","pilon","juicer","3DDNA"]
 if sl:
-    print("hifiasm (already the start of the pipeline so will not have any meaningful effect)\npurge_haplotigs\nshort_read_filtering\nshort_read_mapping\npilon\njuicer\n3DDNA")
+    print("de_novo_assembly (already the start of the pipeline so will not have any meaningful effect)\npurge_haplotigs\nshort_read_filtering\nshort_read_mapping\npilon\njuicer\n3DDNA")
     quit()
 
 if step != None and step not in steplist:
@@ -68,6 +68,10 @@ if step != None and step not in steplist:
 if threads==None:
     threads=94
 
+if int(threads) > 16:
+    buscothreads=16
+else:
+    buscothreads=threads
 if outfile.endswith("/"):
     outfile=outfile[:-1]
 
@@ -195,15 +199,19 @@ if stepscheck(steps):
         outpath= f"{assemblydir}/flye"
         subprocess.run(f"flye --nano-raw {longr} --out-dir {outpath} --threads {threads}", shell=True)
         assembly= f"{outpath}/assembly.fasta"
-        outpath=f"{assemblydir}/flye/{snail}_assembly.bam"
-        subprocess.run(f"minimap2 {assembly} {longr_filtered} | samtools view -bS - > output.bam", shell=True)
+        outpath=f"{assemblydir}/flye/{snail}_assembly.sam"
+        subprocess.run(f"minimap2 -a -x map-ont {assembly} {longr} -t {threads} > {outpath}", shell=True)
         selfalignment=outpath
-        outpath=selfalignment.replace(".bam","_sorted.bam")
-        subprocess.run(f"samtools sort -@ {threads} {selfalignment} -o {outpath}", shell=True)
+        outpath=selfalignment.replace(".sam",".bam")
+        subprocess.run(f"samtools view -@ {threads} -b -S {selfalignment} > {outpath}", shell=True)
+        outpath=selfalignment.replace(".sam","_sorted.bam")
+        subprocess.run(f"samtools sort -@ {threads} {selfalignment.replace('.sam','.bam')} -o {outpath}", shell=True)
         assembly_alignment=outpath
 
+    os.remove(selfalignment)
+    os.remove(elfalignment.replace(".sam",".bam"))
     outpath=f"{resultsdir}/{snail}_busco_raw_assembly"
-    subprocess.run(f"busco -i {assembly} -f -m genome -c {threads} -l mollusca -f -o {outpath}", shell=True)
+    subprocess.run(f"busco -i {assembly} -f -m genome -c {buscothreads} -l mollusca -f -o {outpath}", shell=True)
     subprocess.run(f"quast {assembly} -o {resultsdir}/{snail}_quast_raw_assembly", shell=True)
 else:
     if pac:
@@ -211,18 +219,17 @@ else:
         assemblygraph = f"{outpath}.bp.p_ctg.gfa"
         outpath=f"{assemblydir}/hifiasm/{snail}_assembly.fa"
         assembly=outpath
-        outpath=f"{assemblydir}/hifiasm/{snail}_selfalignment.bam"
+        outpath=f"{assemblydir}/hifiasm/{snail}_selfalignment.sam"
         selfalignment=outpath
-        outpath=selfalignment.replace(".bam","_sorted.bam")
+        outpath=selfalignment.replace(".sam","_sorted.bam")
         assembly_alignment=outpath
     else:
-        outpath= f"{assemblydir}/flye/{snail}_nanopore_filtered.fasta"
-        longr_filtered=outpath
         outpath= f"{assemblydir}/flye"
-        assembly= f"{outpath}/???"
-        outpath=f"{assemblydir}/flye/{snail}_assembly.bam"
+        assembly= f"{outpath}/assembly.fasta"
+        outpath=f"{assemblydir}/flye/{snail}_assembly.sam"
         selfalignment=outpath
-        outpath=selfalignment.replace(".bam","_sorted.bam")
+        outpath=selfalignment.replace(".sam",".bam")
+        outpath=selfalignment.replace(".sam","_sorted.bam")
         assembly_alignment=outpath
 
 
@@ -393,7 +400,7 @@ if stepscheck(steps):
     shutil.copyfile(finalassemblyasm, f"{resultsdir}/{snail}_final_assembly_uncorrected.assembly")
     shutil.copyfile(finalassemblyhic, f"{resultsdir}/{snail}_final_assembly_uncorrected.hic")
     outpath=f"{resultsdir}/{snail}_busco_final_assembly"
-    subprocess.run(f"busco -i {finalassembly}  -m genome -f -c {threads} -l mollusca -o {outpath}", shell=True)
+    subprocess.run(f"busco -i {finalassembly}  -m genome -f -c {buscothreads} -l mollusca -o {outpath}", shell=True)
     subprocess.run(f"quast {finalassembly} -o {resultsdir}/{snail}_quast_final_assembly", shell=True)
 
 
