@@ -77,9 +77,15 @@ if trf == None:
 if braker == None:
     braker="/media/data2/braker3.sif"
 
+if dfam15 == None:
+    dfam15="/media/data2/gastropoda.fa"
 
 if os.path.isfile(dfam) == False:
     print(f"ERROR: file: {dfam} does not exist, exiting")
+    quit()
+
+if os.path.isfile(dfam15) == False:
+    print(f"ERROR: file: {dfam15} does not exist, exiting")
     quit()
 
 
@@ -100,8 +106,8 @@ if step != "braker":
     shutil.copyfile(assembly,f"{predictdir}/repeatmodeler/{snail}_final_assembly_corrected.fasta")
     subprocess.run(f"singularity exec {dfam} BuildDatabase -name {snail} {snail}_final_assembly_corrected.fasta",cwd=f"{predictdir}/repeatmodeler", shell=True)
     subprocess.run(f"singularity exec {dfam} RepeatModeler -threads {threads} -database {snail}",cwd=f"{predictdir}/repeatmodeler",shell=True)
-    subprocess.run(f"cat {dfam15} {predictdir}/repeatmodeler/{snail}-families.fa > {predictdir}/repeatmodeler/{snail}+dfam15_repeats.fa",shell=True)
-    subprocess.run(f"singularity exec {dfam}  RepeatMasker -xsmall -gff  {snail}_final_assembly_corrected.fasta -trf_prgm {trf} -lib {snail}+dfam15.fasta -pa {threads}",cwd=f"{predictdir}/repeatmodeler",shell=True)
+    subprocess.run(f"cat {dfam15} {predictdir}/repeatmodeler/{snail}-families.fa > {predictdir}/repeatmodeler/{snail}+dfam15.fa",shell=True)
+    subprocess.run(f"singularity exec {dfam}  RepeatMasker -xsmall -gff  {snail}_final_assembly_corrected.fasta -trf_prgm {trf} -lib {snail}+dfam15.fa -pa {threads}",cwd=f"{predictdir}/repeatmodeler",shell=True)
     masked=f"{predictdir}/repeatmodeler/{snail}_final_assembly_corrected.fasta.masked"
 else:
     masked=f"{predictdir}/repeatmodeler/{snail}_final_assembly_corrected.fasta.masked"
@@ -130,7 +136,7 @@ else:
     shutil.copyfile(masked,f"{predictdir}/braker/masked.fa")
     if os.path.isdir(f"{predictdir}/braker/aug") == False:
         os.mkdir(f"{predictdir}/braker/aug")
-    if threads > 48:
+    if int(threads) > 48:
         brakerthreads=48
     else:
         brakerthreads=threads

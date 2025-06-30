@@ -61,8 +61,6 @@ if f != None:
 
     quit()
 
-print("oops")
-quit()
 
 if ipr==None:
     ipr="/media/data2/my_interproscan/interproscan-5.74-105.0/"
@@ -106,6 +104,8 @@ if snail == None:
 
 snail=args.snail.replace(" ","")
 
+tdict={}
+
 if step != "interproscan":
     for db in os.listdir(dbdir):
         for dbfile in os.listdir(f"{dbdir}/{db}"):
@@ -127,6 +127,7 @@ if step != "interproscan":
                         cols=line.split("\t")
                         idq=cols[0]
                         edict[idq]=0.0001
+                        tdict[idq]=True
                     for line in lines:
                         cols=line.split("\t")
                         idq=cols[0]
@@ -134,14 +135,16 @@ if step != "interproscan":
                         if float(e) <= 0.0001:
                             if float(e) < float(edict[idq]):
                                 edict[idq]=e
+
                     for line in lines:
                         cols=line.split("\t")
                         ids=cols[1]
                         idq=cols[0]
                         info=iddict[ids]
                         e=cols[10]
-                        if float(e) == float(edict[idq]):
+                        if float(e) == float(edict[idq]) and tdict[idq]:
                             outlines+=f"{line.strip()}\t{info[1:]}\n"
+                            tdict[idq]=False
                 with open(f"{assemblydir}/results/{snail}_{db}_filtered_blastresults.tsv","w") as file:
                     file.write(outlines)
 
