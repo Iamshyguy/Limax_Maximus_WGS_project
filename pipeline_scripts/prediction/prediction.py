@@ -156,8 +156,8 @@ with open(prots) as fasta_file:
 with open(f"{assemblydir}/results/{snail}_proteins_filtered.aa","w") as file:
     file.write(outtext)
 
-subprocess.run(f"busco -i {assemblydir}/results/{snail}_proteins_filtered.aa -f -m protein -c {threads} -l mollusca -f -o{assemblydir}/results/{snail}_busco_filtered_proteins", shell=True)
+subprocess.run(f"busco -i {assemblydir}/results/{snail}_proteins_filtered.aa -f -m protein -c {threads} -l mollusca -f -o {assemblydir}/results/{snail}_busco_filtered_proteins", shell=True)
 
-subprocess.run(f"busco -i {prots} -f -m protein -c {threads} -l mollusca -f -o{assemblydir}/results/{snail}_busco_unfiltered_proteins", shell=True)
+subprocess.run(f"busco -i {prots} -f -m protein -c {threads} -l mollusca -f -o {assemblydir}/results/{snail}_busco_unfiltered_proteins", shell=True)
 
 print("prediction complete, protein file has been added to the results")
