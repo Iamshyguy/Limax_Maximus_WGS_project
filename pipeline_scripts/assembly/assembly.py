@@ -18,9 +18,9 @@ parser.add_argument('outpath',help="path to the output directory (will create on
 parser.add_argument('-p', '--pacbio', action='store_true', help="utilize pacbio hifi data instead of nanopore")
 parser.add_argument('-s', '--snail', help="the name of the snail genome being assembled (default = lmaximus)" )
 parser.add_argument('-t', '--threads', help="the amount of threads you'd like to use (default = 94)")
-parser.add_argument('-j', '--juicerdir', help="location of the juicer CPU directory (default = /media/data2/juicer-1.6/CPU)")
-parser.add_argument('-d', '--dna3ddir', help="location of the 3d-dna directory (default = /media/data2/3d-dna-master_altered_fixed)")
-parser.add_argument('-pj', '--pilonjar', help="location of the pilon jar (default = /home/milan/pilon-1.24.jar )")
+parser.add_argument('-j', '--juicerdir', help="location of the juicer CPU directory (default = /media/data2/tools/juicer-1.6/CPU)")
+parser.add_argument('-d', '--dna3ddir', help="location of the 3d-dna directory (default = /media/data2/tools/3d-dna-master_altered_fixed)")
+parser.add_argument('-pj', '--pilonjar', help="location of the pilon jar (default = /media/data2/tools/pilon-1.24.jar )")
 parser.add_argument('-sf', '--start_from', help="the step of the assembly to start from, to see the list of steps use -sl")
 parser.add_argument('-sl', '--stepslist', action='store_true',help="Showcase a list of steps for the -sf flag")
 parser.add_argument('-ha', '--hifiasm_args', help="additional hifiasm arguments")
@@ -81,13 +81,13 @@ if snail == None:
 snail=snail.replace(" ","")
 
 if juicerdir==None:
-    juicerdir="/media/data2/juicer-1.6/CPU"
+    juicerdir="/media/data2/tools/juicer-1.6/CPU"
 
 if dnadir==None:
-    dnadir="/media/data2/3d-dna-master_altered_fixed"
+    dnadir="/media/data2/tools/3d-dna-master_altered_fixed"
 
 if pilonjar==None:
-    pilonjar="/home/milan/pilon-1.24.jar"
+    pilonjar="/media/data2/tools/pilon-1.24.jar"
 
 if os.path.isdir(juicerdir) == False:
     print(f"{juicerdir} does not exist, exiting")

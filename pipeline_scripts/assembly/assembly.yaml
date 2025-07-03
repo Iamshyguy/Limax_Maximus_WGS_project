@@ -38,7 +38,7 @@ dependencies:
   - canu=2.2=ha47f30e_0
   - capnproto=1.0.2=h2b92303_1
   - cdbtools=0.99=hdcf5f25_10
-  - certifi=2025.1.31=pyhd8ed1ab_0
+  - certifi=2025.4.26=pyhd8ed1ab_0
   - cffi=1.17.1=py39h15c3d72_0
   - charset-normalizer=3.4.1=pyhd8ed1ab_0
   - chopper=0.9.0=hdcf5f25_1
@@ -71,6 +71,7 @@ dependencies:
   - gawk=5.3.1=hcd3d067_0
   - gcc=14.2.0=h96c4ede_2
   - gcc_impl_linux-64=14.2.0=hdb7739f_2
+  - genomescope2=2.0.1=py313r44hdfd78af_1
   - gettext=0.23.1=h5888daf_0
   - gettext-tools=0.23.1=h5888daf_0
   - gfortran_impl_linux-64=14.2.0=h0ee6e4a_2
@@ -105,6 +106,7 @@ dependencies:
   - kernel-headers_linux-64=3.10.0=he073ed8_18
   - keyutils=1.6.1=h166bdaf_0
   - kiwisolver=1.4.7=py39h74842e3_0
+  - kmc=3.2.4=h6dccd9a_2
   - krb5=1.21.3=h659f571_0
   - lame=3.100=h166bdaf_1003
   - lastz=1.04.45=h7b50bb2_0
@@ -419,6 +421,7 @@ dependencies:
   - qhull=2020.2=h434a139_5
   - qt-main=5.15.8=hc9dc06e_21
   - quast=5.3.0=py39pl5321h746d604_1
+  - r-argparse=2.2.5=r44hc72bb7e_0
   - r-base=4.4.0=h019f4a6_1
   - r-cli=3.6.4=r44h93ab643_1
   - r-colorspace=2.1_1=r44hdb488b9_0
@@ -426,10 +429,12 @@ dependencies:
   - r-ellipsis=0.3.2=r44hb1dbf0f_3
   - r-fansi=1.0.6=r44hb1dbf0f_1
   - r-farver=2.1.2=r44ha18555a_1
+  - r-findpython=1.0.9=r44hc72bb7e_0
   - r-ggplot2=3.5.1=r44hc72bb7e_1
   - r-glue=1.8.0=r44h2b5f3a1_0
   - r-gtable=0.3.6=r44hc72bb7e_0
   - r-isoband=0.2.7=r44ha18555a_3
+  - r-jsonlite=2.0.0=r44h2b5f3a1_0
   - r-labeling=0.4.3=r44hc72bb7e_1
   - r-lattice=0.22_6=r44hb1dbf0f_1
   - r-lifecycle=1.0.4=r44hc72bb7e_1
@@ -437,6 +442,7 @@ dependencies:
   - r-mass=7.3_64=r44h2b5f3a1_0
   - r-matrix=1.7_2=r44h2ae2be5_0
   - r-mgcv=1.9_1=r44h0d28552_1
+  - r-minpack.lm=1.2_4=r44hc2011d3_1
   - r-munsell=0.5.1=r44hc72bb7e_1
   - r-nlme=3.1_167=r44hb67ce94_0
   - r-pillar=1.10.1=r44hc72bb7e_0

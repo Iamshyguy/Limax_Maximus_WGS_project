@@ -16,10 +16,10 @@ parser.add_argument('cdna_input1',help="path to the forward short read cdna data
 parser.add_argument('cdna_input2',help="path to the reverse short read cdna data fastq.gz")
 parser.add_argument('-nr','--norna',action='store_true',help="run gene prediction using GALBA instead of BRAKER3 (input path to galba with the -b flag)")
 parser.add_argument('-s', '--snail', help="the name of the snail genome being assembled (default = lmaximus)" )
-parser.add_argument('-d', '--dfam', help="path to the dfam tetools singularity file (make sure this is an absolute path) (default = /media/data2/dfam-tetools-latest.sif)")
-parser.add_argument('-d15', '--dfam15', help="path to partition 15 of the dfam transposable element database in fasta format (default = /media/data2/gastropoda.fa)")
-parser.add_argument('-trf', '--trf_prgm', help="path to the trf executable (make sure this is an absolute path) (if you use conda it will be in the environment prediction under /bin) (default = /home/milan/miniconda3/envs/prediction/bin/trf")
-parser.add_argument('-b', '--braker', help="path to the braker singularity (make sure this is an absolute path) (default = /media/data2/braker3.sif)")
+parser.add_argument('-d', '--dfam', help="path to the dfam tetools singularity file (make sure this is an absolute path) (default = /media/data2/tools/dfam-tetools-latest.sif)")
+parser.add_argument('-d15', '--dfam15', help="path to partition 15 of the dfam transposable element database in fasta format (default = /media/data2/databases/gastropoda.fa)")
+parser.add_argument('-trf', '--trf_prgm', help="path to the trf executable (make sure this is an absolute path) (if you use conda it will be in the environment prediction under /bin) (default media/data2/tools/trf)"
+parser.add_argument('-b', '--braker', help="path to the braker singularity (make sure this is an absolute path) (default = /media/data2/tools/braker3.sif)")
 parser.add_argument('-c', '--cutoff', help="cutoff for the lengths of the proteins created by braker/galba, proteins under this length are filtered out (default = 150)")
 parser.add_argument('-t', '--threads', help="the amount of threads you'd like to use (default = 94)")
 parser.add_argument('-sf', '--start_from', help="the step of the assembly to start from, to see the list of steps use -sl")
@@ -69,16 +69,16 @@ if snail == None:
 snail=args.snail.replace(" ","")
 
 if dfam == None:
-    dfam="/media/data2/dfam-tetools-latest.sif"
+    dfam="/media/data2/tools/dfam-tetools-latest.sif"
 
 if trf == None:
-    trf="/home/milan/miniconda3/envs/prediction/bin/trf"
+    trf="media/data2/tools/trf"
 
 if braker == None:
-    braker="/media/data2/braker3.sif"
+    braker="/media/data2/tools/braker3.sif"
 
 if dfam15 == None:
-    dfam15="/media/data2/gastropoda.fa"
+    dfam15="/media/data2/databases/gastropoda.fa"
 
 if os.path.isfile(dfam) == False:
     print(f"ERROR: file: {dfam} does not exist, exiting")
