@@ -25,8 +25,8 @@ parser.add_argument('-sf', '--start_from', help="the step of the assembly to sta
 parser.add_argument('-sl', '--stepslist', action='store_true',help="Showcase a list of steps for the -sf flag")
 parser.add_argument('-ha', '--hifiasm_args', help="additional hifiasm arguments")
 parser.add_argument('-pa', '--pilon_args', help="additional pilon arguments")
-parser.add_argument('-ja', '--juicer_args', help="additional hifiasm arguments")
-parser.add_argument('-da', '--dna3d_args', help="additional hifiasm arguments")
+parser.add_argument('-ja', '--juicer_args', help="additional juicer arguments")
+parser.add_argument('-da', '--dna3d_args', help="additional 3D_DNA arguments")
 parser.add_argument('-sj', '--stop_at_juicer', action='store_true', help="Stop the pipeline just before the juicer step. Due to the way juicer is coded, only 1 run of the pipeline can be performed at a time unless this flag is used and the juicer and 3DDNA steps are then ran seperately")
 parser.add_argument('-ns', '--no_short_reads', action='store_true', help="Skip steps involving illumina genomic short reads (filtering, mapping and pilon correction)")
 
